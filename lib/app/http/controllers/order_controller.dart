@@ -24,26 +24,16 @@ class OrderController extends Controller {
   Future<Response> create(Request request) async {
     try {
       request.validate({
-        'cust_id': 'required|string',
-        'order_date': 'required|date',
-        'order_total': 'required|numeric|min:0',
-        'order_status': 'required|string|max_length:50',
+        'cust_id': 'required|integer|exists:customer, cust_id',
       }, {
         'cust_id.required': 'ID pelanggan tidak boleh kosong',
-        'cust_id.string': 'ID pelanggan harus berupa teks',
-        'order_date.required': 'Tanggal pesanan tidak boleh kosong',
-        'order_date.date': 'Format tanggal pesanan tidak valid',
-        'order_total.required': 'Total pesanan tidak boleh kosong',
-        'order_total.numeric': 'Total pesanan harus berupa angka',
-        'order_total.min': 'Total pesanan tidak boleh kurang dari 0',
-        'order_status.required': 'Status pesanan tidak boleh kosong',
-        'order_status.string': 'Status pesanan harus berupa teks',
-        'order_status.max_length': 'Status pesanan maksimal 50 karakter',
+        'cust_id.integer': 'ID pelanggan harus berupa bilangan bulat',
+        'cust_id.exists': 'ID pelanggan tidak ditemukan dalam database',
       });
 
       final requestData = request.input();
 
-      requestData['created_at'] = DateTime.now().toIso8601String();
+      requestData['order_date'] = DateTime.now().toIso8601String();
 
       await Order().query().insert(requestData);
 
@@ -61,9 +51,9 @@ class OrderController extends Controller {
   }
 
   // Menampilkan detail order berdasarkan ID
-  Future<Response> show(String orderId) async {
+  Future<Response> show(int orderId) async {
     try {
-      final order = await Order().query().where('order_id', '=', orderId).first();
+      final order = await Order().query().where('order_num', '=', orderId).first();
 
       if (order == null) {
         return Response.json({'message': 'Pesanan tidak ditemukan'}, 404);
@@ -82,18 +72,12 @@ class OrderController extends Controller {
   }
 
   // Mengupdate data order berdasarkan ID
-  Future<Response> update(Request request, String orderId) async {
+  Future<Response> update(Request request, int orderId) async {
     try {
       request.validate({
-        'cust_id': 'required|string',
-        'order_date': 'required|date',
         'order_total': 'required|numeric|min:0',
         'order_status': 'required|string|max_length:50',
       }, {
-        'cust_id.required': 'ID pelanggan tidak boleh kosong',
-        'cust_id.string': 'ID pelanggan harus berupa teks',
-        'order_date.required': 'Tanggal pesanan tidak boleh kosong',
-        'order_date.date': 'Format tanggal pesanan tidak valid',
         'order_total.required': 'Total pesanan tidak boleh kosong',
         'order_total.numeric': 'Total pesanan harus berupa angka',
         'order_total.min': 'Total pesanan tidak boleh kurang dari 0',
@@ -103,15 +87,14 @@ class OrderController extends Controller {
       });
 
       final requestData = request.input();
-      requestData['updated_at'] = DateTime.now().toIso8601String();
 
-      final order = await Order().query().where('order_id', '=', orderId).first();
+      final order = await Order().query().where('order_num', '=', orderId).first();
 
       if (order == null) {
         return Response.json({'message': 'Pesanan tidak ditemukan'}, 404);
       }
 
-      await Order().query().where('order_id', '=', orderId).update(requestData);
+      await Order().query().where('order_num', '=', orderId).update(requestData);
 
       return Response.json({
         'message': 'Pesanan berhasil diperbarui',
@@ -135,7 +118,7 @@ class OrderController extends Controller {
         return Response.json({'message': 'Pesanan tidak ditemukan'}, 404);
       }
 
-      await Order().query().where('order_id', '=', orderId).delete();
+      await Order().query().where('order_num', '=', orderId).delete();
 
       return Response.json({
         'message': 'Pesanan berhasil dihapus',

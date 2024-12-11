@@ -25,22 +25,34 @@ class CustomerController extends Controller {
     try {
       request.validate({
         'cust_name': 'required|string|max_length:50',
-        'cust_email': 'required|string|email|max_length:100',
-        'cust_address': 'required|string|max_length:255',
-        'cust_phone': 'required|string|max_length:15',
+        'cust_address': 'required|string|max_length:50',
+        'cust_city': 'required|string|max_length:20',
+        'cust_state': 'required|string|max_length:5',
+        'cust_zip': 'required|string|max_length:7',
+        'cust_country': 'required|string|max_length:25',
+        'cust_phone': 'required|string|max_length:12',
       }, {
         'cust_name.required': 'Nama pelanggan tidak boleh kosong',
         'cust_name.string': 'Nama pelanggan harus berupa teks',
         'cust_name.max_length': 'Nama pelanggan maksimal 50 karakter',
-        'cust_email.required': 'Email tidak boleh kosong',
-        'cust_email.email': 'Format email tidak valid',
-        'cust_email.max_length': 'Email maksimal 100 karakter',
         'cust_address.required': 'Alamat tidak boleh kosong',
         'cust_address.string': 'Alamat harus berupa teks',
-        'cust_address.max_length': 'Alamat maksimal 255 karakter',
+        'cust_address.max_length': 'Alamat maksimal 50 karakter',
+        'cust_city.required': 'Kota tidak boleh kosong',
+        'cust_city.string': 'Kota harus berupa teks',
+        'cust_city.max_length': 'Kota maksimal 20 karakter',
+        'cust_state.required': 'Negara bagian tidak boleh kosong',
+        'cust_state.string': 'Negara bagian harus berupa teks',
+        'cust_state.max_length': 'Negara bagian maksimal 5 karakter',
+        'cust_zip.required': 'Kode pos tidak boleh kosong',
+        'cust_zip.string': 'Kode pos harus berupa teks',
+        'cust_zip.max_length': 'Kode pos maksimal 7 karakter',
+        'cust_country.required': 'Negara tidak boleh kosong',
+        'cust_country.string': 'Negara harus berupa teks',
+        'cust_country.max_length': 'Negara maksimal 25 karakter',
         'cust_phone.required': 'Nomor telepon tidak boleh kosong',
         'cust_phone.string': 'Nomor telepon harus berupa teks',
-        'cust_phone.max_length': 'Nomor telepon maksimal 15 karakter',
+        'cust_phone.max_length': 'Nomor telepon maksimal 12 karakter',
       });
 
       final requestData = request.input();
@@ -62,9 +74,10 @@ class CustomerController extends Controller {
   }
 
   // Menampilkan detail customer berdasarkan ID
-  Future<Response> show(String custId) async {
+  Future<Response> show(int custId) async {
     try {
-      final customer = await Customer().query().where('cust_id', '=', custId).first();
+      final customer =
+          await Customer().query().where('cust_id', '=', custId).first();
 
       if (customer == null) {
         return Response.json({'message': 'Pelanggan tidak ditemukan'}, 404);
@@ -83,37 +96,53 @@ class CustomerController extends Controller {
   }
 
   // Mengupdate data customer berdasarkan ID
-  Future<Response> update(Request request, String custId) async {
+  Future<Response> update(Request request, int custId) async {
     try {
       request.validate({
         'cust_name': 'required|string|max_length:50',
-        'cust_email': 'required|string|email|max_length:100',
-        'cust_address': 'required|string|max_length:255',
-        'cust_phone': 'required|string|max_length:15',
+        'cust_address': 'required|string|max_length:50',
+        'cust_city': 'required|string|max_length:20',
+        'cust_state': 'required|string|max_length:5',
+        'cust_zip': 'required|string|max_length:7',
+        'cust_country': 'required|string|max_length:25',
+        'cust_phone': 'required|string|max_length:12',
       }, {
         'cust_name.required': 'Nama pelanggan tidak boleh kosong',
         'cust_name.string': 'Nama pelanggan harus berupa teks',
         'cust_name.max_length': 'Nama pelanggan maksimal 50 karakter',
-        'cust_email.required': 'Email tidak boleh kosong',
-        'cust_email.email': 'Format email tidak valid',
-        'cust_email.max_length': 'Email maksimal 100 karakter',
         'cust_address.required': 'Alamat tidak boleh kosong',
         'cust_address.string': 'Alamat harus berupa teks',
-        'cust_address.max_length': 'Alamat maksimal 255 karakter',
+        'cust_address.max_length': 'Alamat maksimal 50 karakter',
+        'cust_city.required': 'Kota tidak boleh kosong',
+        'cust_city.string': 'Kota harus berupa teks',
+        'cust_city.max_length': 'Kota maksimal 20 karakter',
+        'cust_state.required': 'Negara bagian tidak boleh kosong',
+        'cust_state.string': 'Negara bagian harus berupa teks',
+        'cust_state.max_length': 'Negara bagian maksimal 5 karakter',
+        'cust_zip.required': 'Kode pos tidak boleh kosong',
+        'cust_zip.string': 'Kode pos harus berupa teks',
+        'cust_zip.max_length': 'Kode pos maksimal 7 karakter',
+        'cust_country.required': 'Negara tidak boleh kosong',
+        'cust_country.string': 'Negara harus berupa teks',
+        'cust_country.max_length': 'Negara maksimal 25 karakter',
         'cust_phone.required': 'Nomor telepon tidak boleh kosong',
         'cust_phone.string': 'Nomor telepon harus berupa teks',
-        'cust_phone.max_length': 'Nomor telepon maksimal 15 karakter',
+        'cust_phone.max_length': 'Nomor telepon maksimal 12 karakter',
       });
 
       final requestData = request.input();
 
-      final customer = await Customer().query().where('cust_id', '=', custId).first();
+      final customer =
+          await Customer().query().where('cust_id', '=', custId).first();
 
       if (customer == null) {
         return Response.json({'message': 'Pelanggan tidak ditemukan'}, 404);
       }
 
-      await Customer().query().where('cust_id', '=', custId).update(requestData);
+      await Customer()
+          .query()
+          .where('cust_id', '=', custId)
+          .update(requestData);
 
       return Response.json({
         'message': 'Pelanggan berhasil diperbarui',
@@ -134,9 +163,10 @@ class CustomerController extends Controller {
   }
 
   // Menghapus customer berdasarkan ID
-  Future<Response> destroy(String custId) async {
+  Future<Response> destroy(int custId) async {
     try {
-      final customer = await Customer().query().where('cust_id', '=', custId).first();
+      final customer =
+          await Customer().query().where('cust_id', '=', custId).first();
 
       if (customer == null) {
         return Response.json({'message': 'Pelanggan tidak ditemukan'}, 404);
