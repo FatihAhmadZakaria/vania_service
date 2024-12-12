@@ -24,18 +24,20 @@ class ProductNoteController extends Controller {
   Future<Response> create(Request request) async {
     try {
       request.validate({
-        'product_id': 'required|string',
-        'note': 'required|string|max_length:255',
+        'note_id': 'required|string',
+        'prod_id': 'required|string',
+        'note_text': 'required|string',
       }, {
-        'product_id.required': 'ID produk tidak boleh kosong',
-        'product_id.string': 'ID produk harus berupa teks',
-        'note.required': 'Catatan tidak boleh kosong',
-        'note.string': 'Catatan harus berupa teks',
-        'note.max_length': 'Catatan maksimal 255 karakter',
+        'note_id.required': 'ID catatan tidak boleh kosong',
+        'note_id.string': 'ID catatan harus berupa teks',
+        'prod_id.required': 'ID produk tidak boleh kosong',
+        'prod_id.string': 'ID produk harus berupa teks',
+        'note_text.required': 'Catatan tidak boleh kosong',
+        'note_text.string': 'Catatan harus berupa teks',
       });
 
       final requestData = request.input();
-      requestData['created_at'] = DateTime.now().toIso8601String();
+      requestData['note_date'] = DateTime.now().toIso8601String();
 
       await Productnote().query().insert(requestData);
 
@@ -55,10 +57,14 @@ class ProductNoteController extends Controller {
   // Menampilkan detail catatan produk berdasarkan ID
   Future<Response> show(String productNoteId) async {
     try {
-      final productNote = await Productnote().query().where('product_note_id', '=', productNoteId).first();
+      final productNote = await Productnote()
+          .query()
+          .where('note_id', '=', '${productNoteId}')
+          .first();
 
       if (productNote == null) {
-        return Response.json({'message': 'Catatan produk tidak ditemukan'}, 404);
+        return Response.json(
+            {'message': 'Catatan produk tidak ditemukan'}, 404);
       }
 
       return Response.json({
@@ -77,26 +83,32 @@ class ProductNoteController extends Controller {
   Future<Response> update(Request request, String productNoteId) async {
     try {
       request.validate({
-        'product_id': 'required|string',
-        'note': 'required|string|max_length:255',
+        'prod_id': 'required|string',
+        'note_text': 'required|string',
       }, {
-        'product_id.required': 'ID produk tidak boleh kosong',
-        'product_id.string': 'ID produk harus berupa teks',
-        'note.required': 'Catatan tidak boleh kosong',
-        'note.string': 'Catatan harus berupa teks',
-        'note.max_length': 'Catatan maksimal 255 karakter',
+        'prod_id.required': 'ID produk tidak boleh kosong',
+        'prod_id.string': 'ID produk harus berupa teks',
+        'note_text.required': 'Catatan tidak boleh kosong',
+        'note_text.string': 'Catatan harus berupa teks',
       });
 
       final requestData = request.input();
-      requestData['updated_at'] = DateTime.now().toIso8601String();
+      requestData['note_date'] = DateTime.now().toIso8601String();
 
-      final productNote = await Productnote().query().where('product_note_id', '=', productNoteId).first();
+      final productNote = await Productnote()
+          .query()
+          .where('note_id', '=', '${productNoteId}')
+          .first();
 
       if (productNote == null) {
-        return Response.json({'message': 'Catatan produk tidak ditemukan'}, 404);
+        return Response.json(
+            {'message': 'Catatan produk tidak ditemukan'}, 404);
       }
 
-      await Productnote().query().where('product_note_id', '=', productNoteId).update(requestData);
+      await Productnote()
+          .query()
+          .where('note_id', '=', '${productNoteId}')
+          .update(requestData);
 
       return Response.json({
         'message': 'Catatan produk berhasil diperbarui',
@@ -114,13 +126,20 @@ class ProductNoteController extends Controller {
   // Menghapus catatan produk berdasarkan ID
   Future<Response> destroy(String productNoteId) async {
     try {
-      final productNote = await Productnote().query().where('product_note_id', '=', productNoteId).first();
+      final productNote = await Productnote()
+          .query()
+          .where('note_id', '=', '${productNoteId}')
+          .first();
 
       if (productNote == null) {
-        return Response.json({'message': 'Catatan produk tidak ditemukan'}, 404);
+        return Response.json(
+            {'message': 'Catatan produk tidak ditemukan'}, 404);
       }
 
-      await Productnote().query().where('product_note_id', '=', productNoteId).delete();
+      await Productnote()
+          .query()
+          .where('note_id', '=', '${productNoteId}')
+          .delete();
 
       return Response.json({
         'message': 'Catatan produk berhasil dihapus',

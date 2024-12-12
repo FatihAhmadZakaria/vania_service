@@ -10,11 +10,11 @@ class CreateProductnoteTable extends Migration {
       string('prod_id', length: 10);
       date('note_date');
       text('note_text');
-      foreign('prod_id', 'product', 'prod_id');
+      foreign('prod_id', 'product', 'prod_id', constrained: true, onDelete: 'CASCADE');
       primary('note_id');
     });
   }
-  
+
   @override
   Future<void> down() async {
     super.down();

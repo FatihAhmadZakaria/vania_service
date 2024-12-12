@@ -24,11 +24,10 @@ class OrderController extends Controller {
   Future<Response> create(Request request) async {
     try {
       request.validate({
-        'cust_id': 'required|integer|exists:customer, cust_id',
+        'cust_id': 'required|integer',
       }, {
         'cust_id.required': 'ID pelanggan tidak boleh kosong',
         'cust_id.integer': 'ID pelanggan harus berupa bilangan bulat',
-        'cust_id.exists': 'ID pelanggan tidak ditemukan dalam database',
       });
 
       final requestData = request.input();
@@ -45,7 +44,7 @@ class OrderController extends Controller {
       if (e is ValidationException) {
         return Response.json({'message': e.message}, 400);
       } else {
-        return Response.json({'message': 'Internal Server Error'}, 500);
+        return Response.json({'message': 'id_customer tidak ditemukan'}, 200);
       }
     }
   }
@@ -75,15 +74,10 @@ class OrderController extends Controller {
   Future<Response> update(Request request, int orderId) async {
     try {
       request.validate({
-        'order_total': 'required|numeric|min:0',
-        'order_status': 'required|string|max_length:50',
+        'cust_id': 'required|integer',
       }, {
-        'order_total.required': 'Total pesanan tidak boleh kosong',
-        'order_total.numeric': 'Total pesanan harus berupa angka',
-        'order_total.min': 'Total pesanan tidak boleh kurang dari 0',
-        'order_status.required': 'Status pesanan tidak boleh kosong',
-        'order_status.string': 'Status pesanan harus berupa teks',
-        'order_status.max_length': 'Status pesanan maksimal 50 karakter',
+        'cust_id.required': 'ID pelanggan tidak boleh kosong',
+        'cust_id.integer': 'ID pelanggan harus berupa bilangan bulat',
       });
 
       final requestData = request.input();
@@ -104,15 +98,15 @@ class OrderController extends Controller {
       if (e is ValidationException) {
         return Response.json({'message': e.message}, 400);
       } else {
-        return Response.json({'message': 'Internal Server Error'}, 500);
+        return Response.json({'message': 'Order number tidak ditemukan'}, 200);
       }
     }
   }
 
   // Menghapus order berdasarkan ID
-  Future<Response> destroy(String orderId) async {
+  Future<Response> destroy(int orderId) async {
     try {
-      final order = await Order().query().where('order_id', '=', orderId).first();
+      final order = await Order().query().where('order_num', '=', orderId).first();
 
       if (order == null) {
         return Response.json({'message': 'Pesanan tidak ditemukan'}, 404);
