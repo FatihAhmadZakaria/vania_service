@@ -1,10 +1,12 @@
 import 'package:vania/vania.dart';
+import 'package:vania_service/app/http/controllers/auth_controller.dart';
 import 'package:vania_service/app/http/controllers/product_controller.dart';
 import 'package:vania_service/app/http/controllers/customer_controller.dart';
 import 'package:vania_service/app/http/controllers/vendor_controller.dart';
 import 'package:vania_service/app/http/controllers/order_controller.dart';
 import 'package:vania_service/app/http/controllers/product_note_controller.dart';
 import 'package:vania_service/app/http/controllers/order_item_controller.dart';
+import 'package:vania_service/app/http/middleware/authenticate.dart';
 
 class ApiRoute implements Route {
   @override
@@ -18,7 +20,7 @@ class ApiRoute implements Route {
     Router.delete('/product/{prod_id}', productController.destroy);
 
     Router.post('/customer', customerController.create);
-    Router.get('/customer', customerController.index);
+    Router.get('/customer', customerController.index).middleware([AuthenticateMiddleware()]);
     Router.put('/customer/{cust_id}', customerController.update);
     Router.delete('/customer/{cust_id}', customerController.destroy);
 
@@ -41,5 +43,9 @@ class ApiRoute implements Route {
     Router.get('/product/note', productNoteController.index);
     Router.put('/product/note/{note_id}', productNoteController.update);
     Router.delete('/product/note/{note_id}', productNoteController.destroy);
+
+    Router.post('/login', authController.login);
+    Router.delete('/delete/token', authController.allLogout);
+    Router.post('/register', authController.register);
   }
 }
