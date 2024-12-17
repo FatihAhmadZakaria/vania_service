@@ -24,25 +24,22 @@ class OrderItemController extends Controller {
   Future<Response> create(Request request) async {
     try {
       request.validate({
-        'order_id': 'required|string',
-        'product_id': 'required|string',
-        'quantity': 'required|numeric|min:1',
-        'price': 'required|numeric|min:0',
+        'order_num': 'required|integer',
+        'prod_id': 'required|string',
+        'quantity': 'required|integer',
+        'size': 'required|integer',
       }, {
-        'order_id.required': 'ID pesanan tidak boleh kosong',
-        'order_id.string': 'ID pesanan harus berupa teks',
-        'product_id.required': 'ID produk tidak boleh kosong',
-        'product_id.string': 'ID produk harus berupa teks',
+        'order_num.required': 'Nomor pesanan tidak boleh kosong',
+        'order_num.integer': 'Nomor pesanan harus berupa bilangan bulat',
+        'prod_id.required': 'ID produk tidak boleh kosong',
+        'prod_id.string': 'ID produk harus berupa teks',
         'quantity.required': 'Jumlah tidak boleh kosong',
-        'quantity.numeric': 'Jumlah harus berupa angka',
-        'quantity.min': 'Jumlah minimal adalah 1',
-        'price.required': 'Harga tidak boleh kosong',
-        'price.numeric': 'Harga harus berupa angka',
-        'price.min': 'Harga tidak boleh kurang dari 0',
+        'quantity.integer': 'Jumlah harus berupa bilangan bulat',
+        'size.required': 'Ukuran tidak boleh kosong',
+        'size.integer': 'Ukuran harus berupa bilangan bulat',
       });
 
       final requestData = request.input();
-      requestData['created_at'] = DateTime.now().toIso8601String();
 
       await Orderitem().query().insert(requestData);
 
@@ -60,9 +57,12 @@ class OrderItemController extends Controller {
   }
 
   // Menampilkan detail order item berdasarkan ID
-  Future<Response> show(String orderItemId) async {
+  Future<Response> show(int orderItemId) async {
     try {
-      final orderItem = await Orderitem().query().where('order_item_id', '=', orderItemId).first();
+      final orderItem = await Orderitem()
+          .query()
+          .where('order_item', '=', orderItemId)
+          .first();
 
       if (orderItem == null) {
         return Response.json({'message': 'Item pesanan tidak ditemukan'}, 404);
@@ -81,36 +81,36 @@ class OrderItemController extends Controller {
   }
 
   // Mengupdate data order item berdasarkan ID
-  Future<Response> update(Request request, String orderItemId) async {
+  Future<Response> update(Request request, int orderItemId) async {
     try {
       request.validate({
-        'order_id': 'required|string',
-        'product_id': 'required|string',
-        'quantity': 'required|numeric|min:1',
-        'price': 'required|numeric|min:0',
+        'prod_id': 'required|string',
+        'quantity': 'required|integer',
+        'size': 'required|integer',
       }, {
-        'order_id.required': 'ID pesanan tidak boleh kosong',
-        'order_id.string': 'ID pesanan harus berupa teks',
-        'product_id.required': 'ID produk tidak boleh kosong',
-        'product_id.string': 'ID produk harus berupa teks',
+        'prod_id.required': 'ID produk tidak boleh kosong',
+        'prod_id.string': 'ID produk harus berupa teks',
         'quantity.required': 'Jumlah tidak boleh kosong',
-        'quantity.numeric': 'Jumlah harus berupa angka',
-        'quantity.min': 'Jumlah minimal adalah 1',
-        'price.required': 'Harga tidak boleh kosong',
-        'price.numeric': 'Harga harus berupa angka',
-        'price.min': 'Harga tidak boleh kurang dari 0',
+        'quantity.integer': 'Jumlah harus berupa bilangan bulat',
+        'size.required': 'Ukuran tidak boleh kosong',
+        'size.integer': 'Ukuran harus berupa bilangan bulat',
       });
 
       final requestData = request.input();
-      requestData['updated_at'] = DateTime.now().toIso8601String();
 
-      final orderItem = await Orderitem().query().where('order_item_id', '=', orderItemId).first();
+      final orderItem = await Orderitem()
+          .query()
+          .where('order_item', '=', orderItemId)
+          .first();
 
       if (orderItem == null) {
         return Response.json({'message': 'Item pesanan tidak ditemukan'}, 404);
       }
 
-      await Orderitem().query().where('order_item_id', '=', orderItemId).update(requestData);
+      await Orderitem()
+          .query()
+          .where('order_item', '=', orderItemId)
+          .update(requestData);
 
       return Response.json({
         'message': 'Item pesanan berhasil diperbarui',
@@ -126,15 +126,21 @@ class OrderItemController extends Controller {
   }
 
   // Menghapus order item berdasarkan ID
-  Future<Response> destroy(String orderItemId) async {
+  Future<Response> destroy(int orderItemId) async {
     try {
-      final orderItem = await Orderitem().query().where('order_item_id', '=', orderItemId).first();
+      final orderItem = await Orderitem()
+          .query()
+          .where('order_item', '=', orderItemId)
+          .first();
 
       if (orderItem == null) {
         return Response.json({'message': 'Item pesanan tidak ditemukan'}, 404);
       }
 
-      await Orderitem().query().where('order_item_id', '=', orderItemId).delete();
+      await Orderitem()
+          .query()
+          .where('order_item', '=', orderItemId)
+          .delete();
 
       return Response.json({
         'message': 'Item pesanan berhasil dihapus',

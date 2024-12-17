@@ -24,11 +24,15 @@ class ProductController extends Controller {
   Future<Response> create(Request request) async {
     try {
       request.validate({
+        'prod_id': 'required|string|max_length:10',
         'prod_name': 'required|string|max_length:25',
         'prod_price': 'required|numeric|min:0',
         'prod_desc': 'required|string',
         'vend_id': 'required|string|max_length:5',
       }, {
+        'prod_id.required': 'ID produk tidak boleh kosong',
+        'prod_id.string': 'ID produk harus berupa teks',
+        'prod_id.max_length': 'ID produk maksimal 10 karakter',
         'prod_name.required': 'Nama produk tidak boleh kosong',
         'prod_name.string': 'Nama produk harus berupa teks',
         'prod_name.max_length': 'Nama produk maksimal 25 karakter',
@@ -63,7 +67,8 @@ class ProductController extends Controller {
   // Menampilkan detail produk berdasarkan ID
   Future<Response> show(String prodId) async {
     try {
-      final product = await Product().query().where('prod_id', '=', prodId).first();
+      final product =
+          await Product().query().where('prod_id', '=', '$prodId').first();
 
       if (product == null) {
         return Response.json({'message': 'Produk tidak ditemukan'}, 404);
@@ -86,7 +91,7 @@ class ProductController extends Controller {
     try {
       request.validate({
         'prod_name': 'required|string|max_length:25',
-        'prod_price': 'required|numeric|min:0',
+        'prod_price': 'required|integer|min:0',
         'prod_desc': 'required|string',
         'vend_id': 'required|string|max_length:5',
       }, {
@@ -94,7 +99,7 @@ class ProductController extends Controller {
         'prod_name.string': 'Nama produk harus berupa teks',
         'prod_name.max_length': 'Nama produk maksimal 25 karakter',
         'prod_price.required': 'Harga tidak boleh kosong',
-        'prod_price.numeric': 'Harga harus berupa angka',
+        'prod_price.integer': 'Harga harus berupa bilangan bulat',
         'prod_price.min': 'Harga tidak boleh kurang dari 0',
         'prod_desc.required': 'Deskripsi tidak boleh kosong',
         'prod_desc.string': 'Deskripsi harus berupa teks',
@@ -105,13 +110,14 @@ class ProductController extends Controller {
 
       final requestData = request.input();
 
-      final product = await Product().query().where('prod_id', '=', prodId).first();
+      final product =
+          await Product().query().where('prod_id', '=', '$prodId').first();
 
       if (product == null) {
         return Response.json({'message': 'Produk tidak ditemukan'}, 404);
       }
 
-      await Product().query().where('prod_id', '=', prodId).update(requestData);
+      await Product().query().where('prod_id', '=', '$prodId').update(requestData);
 
       return Response.json({
         'message': 'Produk berhasil diperbarui',
@@ -134,13 +140,14 @@ class ProductController extends Controller {
   // Menghapus produk berdasarkan ID
   Future<Response> destroy(String prodId) async {
     try {
-      final product = await Product().query().where('prod_id', '=', prodId).first();
+      final product =
+          await Product().query().where('prod_id', '=', '$prodId').first();
 
       if (product == null) {
         return Response.json({'message': 'Produk tidak ditemukan'}, 404);
       }
 
-      await Product().query().where('prod_id', '=', prodId).delete();
+      await Product().query().where('prod_id', '=', '$prodId').delete();
 
       return Response.json({
         'message': 'Produk berhasil dihapus',

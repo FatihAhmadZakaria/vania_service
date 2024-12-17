@@ -6,7 +6,7 @@ class CreateCustomerTable extends Migration {
   Future<void> up() async{
     super.up();
    await createTable('customer', () {
-      bigIncrements('cust_id');
+      bigIncrements('cust_id', unique: true);
       string('cust_name', length: 50);
       string('cust_address', length: 50);
       string('cust_city', length: 20);

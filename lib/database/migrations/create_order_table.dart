@@ -5,11 +5,11 @@ class CreateOrderTable extends Migration {
   @override
   Future<void> up() async{
    super.up();
-   await createTable('order', () {
+   await createTable('orders', () {
       bigIncrements('order_num');
       date('order_date');
       bigInt('cust_id', unsigned: true);
-      foreign('cust_id', 'customer', 'cust_id');
+      foreign('cust_id', 'customer', 'cust_id', constrained: true, onDelete: 'CASCADE');
       primary('order_num');
     });
   }
@@ -17,6 +17,6 @@ class CreateOrderTable extends Migration {
   @override
   Future<void> down() async {
     super.down();
-    await dropIfExists('order');
+    await dropIfExists('orders');
   }
 }

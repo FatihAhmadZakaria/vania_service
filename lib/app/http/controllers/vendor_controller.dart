@@ -87,7 +87,7 @@ class VendorController extends Controller {
   // Menampilkan detail vendor berdasarkan ID
   Future<Response> show(String vendorId) async {
     try {
-      final vendor = await Vendor().query().where('vendor_id', '=', vendorId).first();
+      final vendor = await Vendor().query().where('vend_id', '=', '$vendorId').first();
 
       if (vendor == null) {
         return Response.json({'message': 'Vendor tidak ditemukan'}, 404);
@@ -109,35 +109,43 @@ class VendorController extends Controller {
   Future<Response> update(Request request, String vendorId) async {
     try {
       request.validate({
-        'name': 'required|string|max_length:100',
-        'email': 'required|email|max_length:100',
-        'phone': 'required|string|max_length:15',
-        'address': 'required|string|max_length:255',
+        'vend_name': 'required|string|max_length:50',
+        'vend_address': 'required|string|max_length:255',
+        'vend_kota': 'required|string|max_length:25',
+        'vend_state': 'required|string|max_length:5',
+        'vend_zip': 'required|string|max_length:7',
+        'vend_country': 'required|string|max_length:25',
       }, {
-        'name.required': 'Nama vendor tidak boleh kosong',
-        'name.string': 'Nama vendor harus berupa teks',
-        'name.max_length': 'Nama vendor maksimal 100 karakter',
-        'email.required': 'Email tidak boleh kosong',
-        'email.email': 'Format email tidak valid',
-        'email.max_length': 'Email maksimal 100 karakter',
-        'phone.required': 'Nomor telepon tidak boleh kosong',
-        'phone.string': 'Nomor telepon harus berupa teks',
-        'phone.max_length': 'Nomor telepon maksimal 15 karakter',
-        'address.required': 'Alamat tidak boleh kosong',
-        'address.string': 'Alamat harus berupa teks',
-        'address.max_length': 'Alamat maksimal 255 karakter',
+        'vend_name.required': 'Nama vendor tidak boleh kosong',
+        'vend_name.string': 'Nama vendor harus berupa teks',
+        'vend_name.max_length': 'Nama vendor maksimal 50 karakter',
+        'vend_address.required': 'Alamat vendor tidak boleh kosong',
+        'vend_address.string': 'Alamat vendor harus berupa teks',
+        'vend_address.max_length': 'Alamat vendor maksimal 255 karakter',
+        'vend_kota.required': 'Kota vendor tidak boleh kosong',
+        'vend_kota.string': 'Kota vendor harus berupa teks',
+        'vend_kota.max_length': 'Kota vendor maksimal 25 karakter',
+        'vend_state.required': 'Provinsi vendor tidak boleh kosong',
+        'vend_state.string': 'Provinsi vendor harus berupa teks',
+        'vend_state.max_length': 'Provinsi vendor maksimal 5 karakter',
+        'vend_zip.required': 'Kode pos vendor tidak boleh kosong',
+        'vend_zip.string': 'Kode pos vendor harus berupa teks',
+        'vend_zip.max_length': 'Kode pos vendor maksimal 7 karakter',
+        'vend_country.required': 'Negara vendor tidak boleh kosong',
+        'vend_country.string': 'Negara vendor harus berupa teks',
+        'vend_country.max_length': 'Negara vendor maksimal 25 karakter',
       });
 
       final requestData = request.input();
       // requestData['updated_at'] = DateTime.now().toIso8601String();
 
-      final vendor = await Vendor().query().where('vendor_id', '=', vendorId).first();
+      final vendor = await Vendor().query().where('vend_id', '=', '$vendorId').first();
 
       if (vendor == null) {
         return Response.json({'message': 'Vendor tidak ditemukan'}, 404);
       }
 
-      await Vendor().query().where('vendor_id', '=', vendorId).update(requestData);
+      await Vendor().query().where('vend_id', '=', '$vendorId').update(requestData);
 
       return Response.json({
         'message': 'Vendor berhasil diperbarui',
@@ -155,13 +163,13 @@ class VendorController extends Controller {
   // Menghapus vendor berdasarkan ID
   Future<Response> destroy(String vendorId) async {
     try {
-      final vendor = await Vendor().query().where('vendor_id', '=', vendorId).first();
+      final vendor = await Vendor().query().where('vend_id', '=', '$vendorId').first();
 
       if (vendor == null) {
         return Response.json({'message': 'Vendor tidak ditemukan'}, 404);
       }
 
-      await Vendor().query().where('vendor_id', '=', vendorId).delete();
+      await Vendor().query().where('vend_id', '=', '$vendorId').delete();
 
       return Response.json({
         'message': 'Vendor berhasil dihapus',

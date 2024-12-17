@@ -11,7 +11,7 @@ class CreateProductTable extends Migration {
       string('prod_name', length: 25);
       integer('prod_price');
       text('prod_desc');
-      foreign('vend_id', 'vendor', 'vend_id');
+      foreign('vend_id', 'vendor', 'vend_id', constrained: true, onDelete: 'CASCADE');
       primary('prod_id');
     });
   }
